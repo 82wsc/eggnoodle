@@ -1,9 +1,16 @@
+const cors = require('cors');
 const express = require('express');
 const multer = require('multer');
 const fs = require('fs');
 const upload = multer({ dest: 'uploads/' });
 
 const app = express();
+
+app.use(cors({
+  origin: 'http://localhost:8080', // Vue가 실행 중인 주소만 허용
+  methods: ['GET', 'POST'],  // 허용할 HTTP 메소드 명시
+  credentials: true  // 쿠키를 포함할 경우 true
+  }));
 
 app.post('/receive_result', upload.single('file'), (req, res) => {
   console.log('Received file:', req.file);
@@ -18,6 +25,36 @@ app.post('/receive_result', upload.single('file'), (req, res) => {
 
     res.send('File received and processed');
   });
+});
+
+const appData = {
+  currentTime: new Date().toTimeString().slice(0, 8),
+  tables: [
+    { id: 1, uses: 0 },
+    { id: 2, uses: 0 },
+    { id: 3, uses: 0 },
+    { id: 4, uses: 0 },
+    { id: 5, uses: 0 },
+    { id: 6, uses: 0 }
+  ],
+  besttable: 1,
+  leasttable: 5,
+  meantime: 0,
+  open: 0,
+  middle: 0,
+  last: 0,
+  availableTables: 0,
+  twoPersonTables: 0,
+  fourPersonTables: 0,
+  sixPersonTables: 0,
+  availableSeats: 0,
+  tableNumber: 0,
+  tableTime: 0
+};
+
+app.get('/api/status', (req, res) => {
+  appData.currentTime = new Date().toTimeString().slice(0, 8); // 요청시마다 시간 업데이트
+  res.json(appData);
 });
 
 app.listen(3000, () => {

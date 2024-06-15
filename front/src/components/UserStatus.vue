@@ -34,26 +34,38 @@ export default {
   data() {
     return {
       currentTime: '',
-      availableTables: 5,
-      twoPersonTables: 2,
-      fourPersonTables: 3,
-      sixPersonTables: 0,
-      availableSeats: 16,
-      tableNumber: 2,
-      tableTime: 20,
+      availableTables: null,
+      twoPersonTables: null,
+      fourPersonTables: null,
+      sixPersonTables: null,
+      availableSeats: null,
+      tableNumber: null,
+      tableTime: null,
     };
   },
   mounted() {
-    this.updateTime();
-    setInterval(this.updateTime, 1000);
+    this.fetchStatus();
+    setInterval(this.fetchStatus, 1000);
   },
   methods: {
-    updateTime() {
-      const now = new Date();
-      this.currentTime = now.toTimeString().slice(0, 8);
+    fetchStatus() {
+      fetch('http://localhost:3000/api/status')
+        .then(response => response.json())
+        .then(data => {
+          const now = new Date();
+          this.currentTime = now.toTimeString().slice(0, 8);
+          this.availableTables = data.availableTables;
+          this.twoPersonTables = data.twoPersonTables;
+          this.fourPersonTables = data.fourPersonTables;
+          this.sixPersonTables = data.sixPersonTables;
+          this.availableSeats = data.availableSeats;
+          this.tableNumber = data.tableNumber;
+          this.tableTime = data.tableTime;
+        })
+        .catch(error => console.error('상태 정보 가져오기 에러:', error));
     },
   },
-};
+}
 </script>
 
 <style scoped>

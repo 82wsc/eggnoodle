@@ -59,31 +59,36 @@
 export default {
   data() {
     return {
-      currentTime: 'hh:mm:ss',
-      tables: [
-        { id: 1, uses: 20 },
-        { id: 2, uses: 30 },
-        { id: 3, uses: 15 },
-        { id: 4, uses: 15 },
-        { id: 5, uses: 20 },
-        { id: 6, uses: 0 }
-      ],
-      besttable: 2,
-      leasttable: 6,
-      meantime : 70,
-      open : 50.0,
-      middle : 30.0,
-      last : 20.0,
+      currentTime: '',
+      tables: [],
+      besttable: null,
+      leasttable: null,
+      meantime: null,
+      open: null,
+      middle: null,
+      last: null,
     };
   },
   mounted() {
-    this.updateTime();
-    setInterval(this.updateTime, 1000);
+    this.fetchStatus();
+    setInterval(this.fetchStatus, 1000); // 1초마다 데이터 업데이트
   },
   methods: {
-    updateTime() {
-      const now = new Date();
-      this.currentTime = now.toTimeString().slice(0, 8);
+    fetchStatus() {
+      fetch('http://localhost:3000/api/status')
+        .then(response => response.json())
+        .then(data => {
+          const now = new Date();
+          this.currentTime = now.toTimeString().slice(0, 8);
+          this.tables = data.tables;
+          this.besttable = data.besttable;
+          this.leasttable = data.leasttable;
+          this.meantime = data.meantime;
+          this.open = data.open;
+          this.middle = data.middle;
+          this.last = data.last;
+        })
+        .catch(error => console.error('상태 정보 가져오기 에러:', error));
     },
   },
 }

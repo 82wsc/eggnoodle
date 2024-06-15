@@ -160,26 +160,26 @@ def predict():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
         
-# @app.route('/send_result', methods=['GET'])
-# def send_result():
-#     url = 'http://localhost:3000/receive_result'
-#     # try:
-#     #     with open('result.json', 'rb') as f:
-#     #         files = {'file': ('result.json', f, 'application/json')}
-#     #         response = requests.post(url, files=files)
-#     #         return response.text
-#     # except requests.exceptions.RequestException as e:
-#     #     return str(e)
+@app.route('/send_result', methods=['GET'])
+def send_result():
+    url = 'http://localhost:3000/receive_result'
+    # try:
+    #     with open('result.json', 'rb') as f:
+    #         files = {'file': ('result.json', f, 'application/json')}
+    #         response = requests.post(url, files=files)
+    #         return response.text
+    # except requests.exceptions.RequestException as e:
+    #     return str(e)
     
-#     # result.json 파일을 다른 서버로 전송
-#     files = {'file': ('result.json', open('result.json', 'rb'))}
-#     response = requests.post(url, files=files)
+    # result.json 파일을 다른 서버로 전송
+    files = {'file': ('result.json', open('result.json', 'rb'))}
+    response = requests.post(url, files=files)
     
-#     # 로깅: 응답 상태 코드와 응답 내용을 출력합니다.
-#     print("Status Code:", response.status_code)
-#     print("Response Body:", response.text)
+    # 로깅: 응답 상태 코드와 응답 내용을 출력합니다.
+    print("Status Code:", response.status_code)
+    print("Response Body:", response.text)
 
-#     return response.text
+    return response.text
 
 @app.route('/result')
 def result():
