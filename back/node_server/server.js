@@ -2,7 +2,7 @@ const cors = require('cors');
 const express = require('express');
 const multer = require('multer');
 const fs = require('fs');
-const upload = multer({ dest: 'uploads/' });
+const path = require('path');
 
 const app = express();
 
@@ -14,8 +14,10 @@ app.use(cors({
 
 app.post('/receive_result', upload.single('file'), (req, res) => {
   console.log('Received file:', req.file);
-  
-  fs.readFile(req.file.path, 'utf8', (err, data) => {
+
+  const filePath = path.join(__dirname, 'uploads', req.file.filename);
+
+  fs.readFile(filePath, 'utf8', (err, data) => {
     if (err) return res.status(500).send('Error reading file');
     const jsonData = JSON.parse(data);
     console.log(JSON.stringify(jsonData, null, 4)); // JSON 데이터 사용 가능
