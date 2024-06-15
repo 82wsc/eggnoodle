@@ -84,6 +84,8 @@ def predict():
         results = []
 
         frame_index = 0
+        second_index = 0
+
         while cap.isOpened():
             ret, frame = cap.read()
             if not ret:
@@ -137,8 +139,8 @@ def predict():
                     group_data['useable'] = group_data['person'] == 0
 
                 # 초 단위로 결과 저장
-                second_index = frame_index // fps
                 results.append({'second': second_index, 'groups': frame_results})
+                second_index += 1
 
             out.write(frame)
             frame_index += 1
