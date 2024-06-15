@@ -5,26 +5,29 @@
     </router-link>
     <nav>
       <router-link to="/UserStatus" active-class="active">좌석현황</router-link>
-      <router-link to="/OrderStatus" active-class="active">좌석안내시스템</router-link>
+      <router-link to="/OrderStatus" active-class="active"
+        >좌석안내시스템</router-link
+      >
+      <router-link to="/ModelPage" active-class="active">CCTV연결</router-link>
     </nav>
-    <button class="login-btn">로그아웃</button>
+    <!--<button class="login-btn">로그아웃</button>-->
   </header>
 </template>
 
 <script>
 export default {
-  name: 'HeaderComponent',
+  name: "HeaderComponent",
 };
 </script>
 
 <style scoped>
 @font-face {
-  font-family: 'Bold';
-  src: url('@/assets/GmarketSansTTFBold.ttf') format('truetype');
+  font-family: "Bold";
+  src: url("@/assets/GmarketSansTTFBold.ttf") format("truetype");
 }
 @font-face {
-  font-family: 'Light';
-  src: url('@/assets/GmarketSansTTFLight.ttf') format('truetype');
+  font-family: "Light";
+  src: url("@/assets/GmarketSansTTFLight.ttf") format("truetype");
 }
 
 header {
@@ -39,20 +42,20 @@ nav a {
   margin: 0 100px;
   text-decoration: none;
   color: #000;
-  font-family: 'Light';
+  font-family: "Light";
   font-weight: 900;
 }
-.login-btn {
+login-btn {
   padding: 5px 10px;
   background-color: #eeeeee;
   border: none;
   cursor: pointer;
-  font-family: 'Light';
+  font-family: "Light";
   margin-left: 70px;
 }
 .logo-image {
   margin: 0 100px;
-  width:150px;
+  width: 150px;
   height: auto;
 }
 .active {

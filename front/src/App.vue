@@ -9,24 +9,25 @@
 </template>
 
 <script>
-
-import TheHeader from '@/layouts/TheHeader.vue';
-import TheView from '@/layouts/TheView.vue';
-import TheFooter from '@/layouts/TheFooter.vue';
+import TheHeader from "@/layouts/TheHeader.vue";
+import TheView from "@/layouts/TheView.vue";
+import TheFooter from "@/layouts/TheFooter.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
     TheHeader,
     TheView,
-    TheFooter
+    TheFooter,
   },
 
   computed: {
     backgroundClass() {
-      return this.$route.name === 'Home' ? 'home-background' : 'userstatus-background';
-    }
-  }
+      return this.$route.name === "Home"
+        ? "home-background"
+        : "userstatus-background";
+    },
+  },
 };
 </script>
 
@@ -41,12 +42,12 @@ body {
 }
 
 .home-background {
-  background-image: url('@/assets/foot_blue.png');
+  background-image: url("@/assets/foot_blue.png");
   background-size: cover;
 }
 
 .userstatus-background {
-  background-image: url('@/assets/foot_orange.png');
+  background-image: url("@/assets/foot_orange.png");
   background-size: cover;
 }
 </style>
