@@ -10,7 +10,7 @@ app = Flask(__name__)
 model = YOLO('model/weights/best.pt')
 
 # 절대 위치 그룹 정보 로드 및 해상도 조정
-with open('absolute_positions .json') as f:
+with open('absolute_positions.json') as f:
     absolute_positions = json.load(f)
 
 # 원본 그룹 바운딩 박스의 해상도

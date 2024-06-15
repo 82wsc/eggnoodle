@@ -3,28 +3,31 @@
     <div class="content">
       <div class="top">
         <img src="@/assets/egglogo.png" alt="Menu" class="egglogo-image" />
-        <div class="time">기준 시간&emsp;&emsp;<span class = "coco">{{ currentTime }}</span></div>
+        <div class="time">
+          기준 시간&emsp;&emsp;<span class="coco">{{ currentTime }}</span>
+        </div>
       </div>
       <div class="middle1">
         <div class="tables">
           <div v-for="table in tables" :key="table.id" class="table">
-            <h3>Table    <span class="coco2">{{ table.id }}  </span>  :</h3>
-            <br>
-            <span class="coco3">{{ table.uses }}</span>  %
+            <h3>
+              Table <span class="coco2">{{ table.id }} </span> :
+            </h3>
+            <br />
+            <span class="coco3">{{ table.uses }}</span> %
           </div>
         </div>
-        <img src="@/assets/arrow2.png" class="arrow2">
+        <img src="@/assets/arrow2.png" class="arrow2" />
         <div class="middle2">
-          <div class = "info">
+          <div class="info">
             <h1>좌석 선호도</h1>
-            <br>
-            <img src="@/assets/egg2.png" class="egg2">
-            최다 이용 테이블 : 
-            &ensp;<span class="coco">{{ besttable }}</span>&ensp;번 테이블
-            <br><br>
-            <img src="@/assets/egg2.png" class="egg2">
-            최소 이용 테이블 : 
-            &ensp;<span class="coco">{{ leasttable }}</span>&ensp;번 테이블
+            <br />
+            <img src="@/assets/egg2.png" class="egg2" />
+            최다 이용 테이블 : &ensp;<span class="coco">{{ besttable }}</span
+            >&ensp;번 테이블 <br /><br />
+            <img src="@/assets/egg2.png" class="egg2" />
+            최소 이용 테이블 : &ensp;<span class="coco">{{ leasttable }}</span
+            >&ensp;번 테이블
           </div>
           <!-- <div class="info">
             <h1>체류시간</h1>
@@ -36,20 +39,20 @@
         </div>
       </div>
       <div class="middle3">
-        <img src="@/assets/arrow.png" class="arrow">
+        <img src="@/assets/arrow.png" class="arrow" />
         <h4>일별 기준 시간까지의 각 테이블 누적 이용률</h4>
       </div>
-      <div class = "bottom">
-      <h2>시간대별 이용률</h2>
-      <br>
-      <img src="@/assets/egg3.png" class="egg2">
-      오픈 (10:30~12:00) :&ensp;<span class = "coco">{{ open }}</span> %
-      <span class="spacer"></span>
-      <img src="@/assets/egg3.png" class="egg2">
-      미들 (12:00~16:00) :&ensp;<span class = "coco">{{ middle }}</span> %
-      <span class="spacer"></span>
-      <img src="@/assets/egg3.png" class="egg2">
-      마감 (16:00~20:30) :&ensp;<span class = "coco">{{ last }}</span> %
+      <div class="bottom">
+        <h2>시간대별 이용률</h2>
+        <br />
+        <img src="@/assets/egg3.png" class="egg2" />
+        오픈 (10:30~12:00) :&ensp;<span class="coco">{{ open }}</span> %
+        <span class="spacer"></span>
+        <img src="@/assets/egg3.png" class="egg2" />
+        미들 (12:00~16:00) :&ensp;<span class="coco">{{ middle }}</span> %
+        <span class="spacer"></span>
+        <img src="@/assets/egg3.png" class="egg2" />
+        마감 (16:00~20:30) :&ensp;<span class="coco">{{ last }}</span> %
       </div>
     </div>
   </main>
@@ -59,7 +62,7 @@
 export default {
   data() {
     return {
-      currentTime: '',
+      currentTime: "",
       tables: [],
       besttable: null,
       leasttable: null,
@@ -75,9 +78,9 @@ export default {
   },
   methods: {
     fetchStatus() {
-      fetch('http://localhost:3000/api/status')
-        .then(response => response.json())
-        .then(data => {
+      fetch("http://localhost:3000/api/status")
+        .then((response) => response.json())
+        .then((data) => {
           const now = new Date();
           this.currentTime = now.toTimeString().slice(0, 8);
           this.tables = data.tables;
@@ -88,20 +91,20 @@ export default {
           this.middle = data.middle;
           this.last = data.last;
         })
-        .catch(error => console.error('상태 정보 가져오기 에러:', error));
+        .catch((error) => console.error("상태 정보 가져오기 에러:", error));
     },
   },
-}
+};
 </script>
 
 <style scoped>
 @font-face {
-  font-family: 'Bold';
-  src: url('@/assets/GmarketSansTTFBold.ttf') format('truetype');
+  font-family: "Bold";
+  src: url("@/assets/GmarketSansTTFBold.ttf") format("truetype");
 }
 @font-face {
-  font-family: 'Light';
-  src: url('@/assets/GmarketSansTTFLight.ttf') format('truetype');
+  font-family: "Light";
+  src: url("@/assets/GmarketSansTTFLight.ttf") format("truetype");
 }
 
 main {
@@ -130,7 +133,7 @@ main {
   margin-left: 70px;
   width: 250px;
   padding: 15px;
-  font-family: 'Bold';
+  font-family: "Bold";
   background-color: white;
   border-radius: 10px;
   font-size: 17px;
@@ -148,7 +151,7 @@ main {
   margin: auto;
   margin-bottom: 20px;
   padding: 20px;
-  font-family: 'Light';
+  font-family: "Light";
   font-weight: bold;
   background-color: white;
   border-radius: 10px;
@@ -184,8 +187,8 @@ main {
 }
 .arrow {
   width: 11px;
-	height: 11px;
-  margin-left:-21pc;
+  height: 11px;
+  margin-left: -21pc;
   margin-top: -15px;
   margin-right: 5px;
 }
@@ -197,13 +200,13 @@ h4 {
 }
 .arrow2 {
   width: 35px;
-	height: 35px;
+  height: 35px;
   margin-top: 50px;
 }
-.bottom{
+.bottom {
   margin-top: 30px;
   padding: 12px;
-  font-family: 'Light';
+  font-family: "Light";
   background-color: white;
   border-radius: 10px;
   font-size: 17px;
@@ -239,7 +242,7 @@ h3 {
 }
 .egg2 {
   width: 20px;
-	height: auto;
+  height: auto;
   margin-top: -3px;
   margin-bottom: -4px;
   margin-right: 3px;

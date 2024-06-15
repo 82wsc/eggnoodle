@@ -1,16 +1,34 @@
-const cors = require('cors');
 const express = require('express');
 const multer = require('multer');
+const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
+
+// 'uploads' 폴더가 없으면 생성합니다.
+const uploadDirectory = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadDirectory)) {
+  fs.mkdirSync(uploadDirectory);
+}
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({ storage: storage });
 
 const app = express();
 
 app.use(cors({
-  origin: 'http://localhost:8080', // Vue가 실행 중인 주소만 허용
-  methods: ['GET', 'POST'],  // 허용할 HTTP 메소드 명시
+  origin: 'http://localhost:8080', // Vue가 실행 중인 주소
+  methods: ['GET', 'POST'],  // 허용할 HTTP 메소드
   credentials: true  // 쿠키를 포함할 경우 true
-  }));
+}));
 
 app.post('/receive_result', upload.single('file'), (req, res) => {
   console.log('Received file:', req.file);
