@@ -29,4 +29,3 @@ def calculate_group_utilization_rate(result_file_path):
 if __name__ == "__main__":
     result_file_path = 'result.json'
     calculate_group_utilization_rate(result_file_path)
-
