@@ -4,6 +4,7 @@ from ultralytics import YOLO
 import cv2
 import json
 import requests
+import subprocess
 
 app = Flask(__name__)
 CORS(app)  # CORS 설정 추가
@@ -86,9 +87,6 @@ def predict():
         frame_index = 0
         second_index = 0
 
-        # 각 그룹의 초기 count 값을 저장할 딕셔너리 초기화
-        previous_counts = {}
-
         while cap.isOpened():
             ret, frame = cap.read()
             if not ret:
@@ -141,18 +139,6 @@ def predict():
                 for group_name, group_data in frame_results.items():
                     group_data['useable'] = group_data['person'] == 0
 
-                    # 그룹에 대한 초기 count 값을 설정
-                    if group_name not in previous_counts:
-                        previous_counts[group_name] = 0
-
-                    # useable 상태가 false인 경우 count 증가
-                    if not group_data['useable']:
-                        previous_counts[group_name] += 1
-
-                    # 백분율 계산
-                    percentage = (previous_counts[group_name] / (second_index + 1)) * 100
-                    group_data['count'] = round(percentage, 2)
-
                 # 초 단위로 결과 저장
                 results.append({'second': second_index, 'groups': frame_results})
                 second_index += 1
@@ -165,8 +151,10 @@ def predict():
 
         # result.json 저장
         with open('result.json', 'w') as json_file:
-            json.dump(results, json_file, ensure_ascii=False, indent=4)
+            json.dump({'results': results}, json_file, ensure_ascii=False, indent=4)
 
+        # state.py 실행
+        subprocess.run(['python', 'state.py'])
 
         # Node.js 서버로 결과 자동 전송
         url = 'http://localhost:3000/receive_result'
