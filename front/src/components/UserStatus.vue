@@ -3,25 +3,38 @@
     <div class="content">
       <img src="@/assets/egglogo.png" alt="Menu" class="egglogo-image" />
       <div class="time">
-      <img src="@/assets/egg1.png" class="egg1">
-      기준 시간&emsp;&emsp;<span class = "coco">{{ currentTime }}</span></div>
-      <div class = "info">
-      <img src="@/assets/egg1.png" class="egg1">
-      사용 가능 테이블 수 :&ensp;<span class="coco">{{ availableTables }}</span>&ensp;개</div>
-      <div class = "button">2인 :&ensp;<span class="coco">{{ twoPersonTables }}</span>&ensp;개</div>
-      <div class = "button">4인 :&ensp;<span class="coco">{{ fourPersonTables }}</span>&ensp;개</div>
-      <div class = "button">6인 :&ensp;<span class="coco">{{ sixPersonTables }}</span>&ensp;개</div>
-      <div class = "info">
-      <img src="@/assets/egg1.png" class="egg1">
-      사용 가능 좌석 수 :&ensp;<span class = "coco">{{ availableSeats }}</span>&ensp;개</div>
-      <!-- <div class = "table"><img src="@/assets/egg1.png" class="egg1">
-      최장 체류 테이블 :&ensp;<span class = "coco">{{ tableNumber }}</span>&ensp;번
-      <span class="spacer"></span><img src="@/assets/egg1.png" class="egg1">
-      평균 체류 시간 :&ensp;<span class = "coco">{{ tableTime }}</span>&ensp;분
-      </div> -->
+        <img src="@/assets/egg1.png" class="egg1" />
+        기준 시간&emsp;&emsp;<span class="coco">{{ currentTime }}</span>
+      </div>
+      <div class="info">
+        <img src="@/assets/egg1.png" class="egg1" />
+        사용 가능 테이블 수 :&ensp;<span class="coco">{{
+          availableTables
+        }}</span
+        >&ensp;개
+      </div>
+      <div class="button">
+        2인 :&ensp;<span class="coco">{{ twoPersonTables }}</span
+        >&ensp;개
+      </div>
+      <div class="button">
+        4인 :&ensp;<span class="coco">{{ fourPersonTables }}</span
+        >&ensp;개
+      </div>
+      <div class="button">
+        6인 :&ensp;<span class="coco">{{ sixPersonTables }}</span
+        >&ensp;개
+      </div>
+      <div class="info">
+        <img src="@/assets/egg1.png" class="egg1" />
+        사용 가능 좌석 수 :&ensp;<span class="coco">{{ availableSeats }}</span
+        >&ensp;개
+      </div>
       <div class="bottom">
-        <img src="@/assets/arrow.png" class="arrow">
-        <h4>해당 값은 실시간 데이터를 반영한 것으로 오차가 있을 수 있습니다.</h4>
+        <img src="@/assets/arrow.png" class="arrow" />
+        <h4>
+          해당 값은 실시간 데이터를 반영한 것으로 오차가 있을 수 있습니다.
+        </h4>
       </div>
     </div>
     <img src="@/assets/menu.png" alt="Menu" class="menu-image" />
@@ -30,17 +43,15 @@
 
 <script>
 export default {
-  name: 'MainComponent',
+  name: "MainComponent",
   data() {
     return {
-      currentTime: '',
+      currentTime: "",
       availableTables: null,
       twoPersonTables: null,
       fourPersonTables: null,
       sixPersonTables: null,
       availableSeats: null,
-      tableNumber: null,
-      tableTime: null,
     };
   },
   mounted() {
@@ -49,35 +60,31 @@ export default {
   },
   methods: {
     fetchStatus() {
-      fetch('http://localhost:3000/api/status')
-        .then(response => response.json())
-        .then(data => {
-          const now = new Date();
-          this.currentTime = now.toTimeString().slice(0, 8);
+      fetch("http://localhost:3000/api/status")
+        .then((response) => response.json())
+        .then((data) => {
+          this.currentTime = new Date().toTimeString().slice(0, 8);
           this.availableTables = data.availableTables;
           this.twoPersonTables = data.twoPersonTables;
           this.fourPersonTables = data.fourPersonTables;
           this.sixPersonTables = data.sixPersonTables;
           this.availableSeats = data.availableSeats;
-          this.tableNumber = data.tableNumber;
-          this.tableTime = data.tableTime;
         })
-        .catch(error => console.error('상태 정보 가져오기 에러:', error));
+        .catch((error) => console.error("상태 정보 가져오기 에러:", error));
     },
   },
-}
+};
 </script>
 
 <style scoped>
 @font-face {
-  font-family: 'Bold';
-  src: url('@/assets/GmarketSansTTFBold.ttf') format('truetype');
+  font-family: "Bold";
+  src: url("@/assets/GmarketSansTTFBold.ttf") format("truetype");
 }
 @font-face {
-  font-family: 'Light';
-  src: url('@/assets/GmarketSansTTFLight.ttf') format('truetype');
+  font-family: "Light";
+  src: url("@/assets/GmarketSansTTFLight.ttf") format("truetype");
 }
-
 
 main {
   display: flex;
@@ -97,16 +104,16 @@ main {
   display: inline-block;
   width: 30px;
 }
-.time, .info {
+.time,
+.info {
   margin-top: 30px;
   padding: 12px;
-  font-family: 'Bold';
+  font-family: "Bold";
   background-color: white;
   border-radius: 10px;
   font-size: 17px;
   box-shadow: 5px 5px 5px #cacaca;
 }
-
 .button {
   display: inline-flex;
   margin: 15px;
@@ -117,12 +124,12 @@ main {
   background-color: white;
   box-shadow: 5px 5px 5px #cacaca;
   border-radius: 10px;
-  font-family: 'Bold';
+  font-family: "Bold";
 }
-.table{
+.table {
   margin-top: 30px;
   padding: 12px;
-  font-family: 'Bold';
+  font-family: "Bold";
   background-color: white;
   border-radius: 10px;
   font-size: 17px;
@@ -143,7 +150,7 @@ main {
 }
 .egg1 {
   width: 20px;
-	height: auto;
+  height: auto;
   margin-top: -3px;
   margin-bottom: -4px;
   margin-right: 3px;
@@ -153,7 +160,7 @@ main {
 }
 .arrow {
   width: 12px;
-	height: 12px;
+  height: 12px;
   margin-top: 30px;
   margin-left: -5pc;
   margin-right: 7px;
