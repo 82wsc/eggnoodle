@@ -64,11 +64,11 @@ export default {
         .then((response) => response.json())
         .then((data) => {
           this.currentTime = new Date().toTimeString().slice(0, 8);
-          this.availableTables = data.availableTables;
-          this.twoPersonTables = data.twoPersonTables;
-          this.fourPersonTables = data.fourPersonTables;
-          this.sixPersonTables = data.sixPersonTables;
-          this.availableSeats = data.availableSeats;
+          this.availableTables = data.useable_TotalTable;
+          this.twoPersonTables = data.Double_Seat;
+          this.fourPersonTables = data.Four_Seat;
+          this.sixPersonTables = data.Six_Seat;
+          this.availableSeats = data.useable_TotalChair;
         })
         .catch((error) => console.error("상태 정보 가져오기 에러:", error));
     },

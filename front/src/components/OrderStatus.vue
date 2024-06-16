@@ -9,12 +9,12 @@
       </div>
       <div class="middle1">
         <div class="tables">
-          <div v-for="table in tables" :key="table.id" class="table">
+          <div v-for="(rate, group) in tables" :key="group" class="table">
             <h3>
-              Table <span class="coco2">{{ table.id }} </span> :
+              Table <span class="coco2">{{ group }} </span> :
             </h3>
             <br />
-            <span class="coco3">{{ table.uses }}</span> %
+            <span class="coco3">{{ rate }}</span> %
           </div>
         </div>
         <img src="@/assets/arrow2.png" class="arrow2" />
@@ -29,13 +29,6 @@
             최소 이용 테이블 : &ensp;<span class="coco">{{ leasttable }}</span
             >&ensp;번 테이블
           </div>
-          <!-- <div class="info">
-            <h1>체류시간</h1>
-            <br>
-            <img src="@/assets/egg2.png" class="egg2">
-            평균 고객 체류시간 : 
-            &ensp;<span class="coco">{{ meantime }}</span>&ensp;분
-          </div> -->
         </div>
       </div>
       <div class="middle3">
@@ -63,7 +56,7 @@ export default {
   data() {
     return {
       currentTime: "",
-      tables: [],
+      tables: {},
       besttable: null,
       leasttable: null,
       meantime: null,
@@ -83,15 +76,41 @@ export default {
         .then((data) => {
           const now = new Date();
           this.currentTime = now.toTimeString().slice(0, 8);
-          this.tables = data.tables;
-          this.besttable = data.besttable;
-          this.leasttable = data.leasttable;
+          this.tables = data.utilization_rates;
+          this.besttable = this.getBestTable(data.utilization_rates);
+          this.leasttable = this.getLeastTable(data.utilization_rates);
           this.meantime = data.meantime;
           this.open = data.open;
           this.middle = data.middle;
           this.last = data.last;
         })
         .catch((error) => console.error("상태 정보 가져오기 에러:", error));
+    },
+    getBestTable(utilization_rates) {
+      let bestTable = "";
+      let maxRate = -1;
+      for (const [key, value] of Object.entries(utilization_rates)) {
+        if (value > maxRate) {
+          maxRate = value;
+          bestTable = key
+            .replace("_Utilization_Rate", "")
+            .replace("Group_", "");
+        }
+      }
+      return bestTable;
+    },
+    getLeastTable(utilization_rates) {
+      let leastTable = "";
+      let minRate = 101;
+      for (const [key, value] of Object.entries(utilization_rates)) {
+        if (value < minRate) {
+          minRate = value;
+          leastTable = key
+            .replace("_Utilization_Rate", "")
+            .replace("Group_", "");
+        }
+      }
+      return leastTable;
     },
   },
 };
