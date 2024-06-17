@@ -4,7 +4,7 @@
       <div class="top">
         <img src="@/assets/egglogo.png" alt="Menu" class="egglogo-image" />
         <div class="time">
-          기준 시간&emsp;&emsp;<span class="coco">{{ currentTime }}</span>
+          기준 시간&emsp;&emsp;<span class="StandardTime">{{ runTime }}</span>
         </div>
       </div>
       <div class="middle1">
@@ -28,6 +28,15 @@
             <img src="@/assets/egg2.png" class="egg2" />
             최소 이용 테이블 : &ensp;<span class="coco">{{ leasttable }}</span
             >&ensp;번 테이블
+          </div>
+          <div class="preference">
+            <h1>좌석 선호도</h1>
+            <br />
+            <img src="@/assets/egg2.png" class="egg2" />
+            4인좌석 이용률 : &ensp;<span class="coco">{{ fourSeatRate }}</span>
+            % <br /><br />
+            <img src="@/assets/egg2.png" class="egg2" />
+            2인좌석 이용률 : &ensp;<span class="coco">{{ twoSeatRate }}</span> %
           </div>
         </div>
       </div>
@@ -55,11 +64,12 @@
 export default {
   data() {
     return {
-      currentTime: "",
+      runTime: "", // 추가된 데이터
       tables: {},
       besttable: null,
       leasttable: null,
-      meantime: null,
+      fourSeatRate: null,
+      twoSeatRate: null,
       open: null,
       middle: null,
       last: null,
@@ -74,12 +84,12 @@ export default {
       fetch("http://localhost:3000/api/status")
         .then((response) => response.json())
         .then((data) => {
-          const now = new Date();
-          this.currentTime = now.toTimeString().slice(0, 8);
+          this.runTime = data.run_time; // 모델 실행 시간 추가
           this.tables = data.utilization_rates;
           this.besttable = this.getBestTable(data.utilization_rates);
           this.leasttable = this.getLeastTable(data.utilization_rates);
-          this.meantime = data.meantime;
+          this.fourSeatRate = data.Four_Seat_Utilization_Rate.toFixed(1);
+          this.twoSeatRate = data.Two_Seat_Utilization_Rate.toFixed(1);
           this.open = data.open;
           this.middle = data.middle;
           this.last = data.last;
@@ -148,18 +158,29 @@ main {
   margin-bottom: 10px;
 }
 .time {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   margin-block: auto;
   margin-left: 70px;
-  width: 250px;
+  width: auto;
   padding: 15px;
   font-family: "Bold";
   background-color: white;
   border-radius: 10px;
   font-size: 17px;
   box-shadow: 5px 5px 5px #cacaca;
+  white-space: nowrap; /* Prevent the text from wrapping */
 }
+
 .coco {
   color: #ff814b;
+  width: flex;
+}
+.StandardTime {
+  color: #ff814b;
+  width: flex;
+  justify-content: center;
 }
 .middle1 {
   display: flex;
@@ -167,6 +188,17 @@ main {
   gap: 60px;
 }
 .info {
+  margin: auto;
+  margin-bottom: 20px;
+  padding: 20px;
+  font-family: "Light";
+  font-weight: bold;
+  background-color: white;
+  border-radius: 10px;
+  font-size: 17px;
+  box-shadow: 5px 5px 5px #cacaca;
+}
+.preference {
   margin: auto;
   margin-bottom: 20px;
   padding: 20px;

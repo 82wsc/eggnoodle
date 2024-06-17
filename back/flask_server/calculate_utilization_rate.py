@@ -18,7 +18,32 @@ def calculate_group_utilization_rate(result_file_path):
 
     utilization_rates = {}
     for group_name, counts in group_utilization.items():
-        utilization_rates[f"{group_name}_Utilization_Rate"] = (counts['useable'] / counts['total']) * 100
+        utilization_rates[f"{group_name}_Utilization_Rate"] = round((counts['useable'] / counts['total']) * 100, 1)
+
+    # Calculate Two_Seat_Utilization_Rate and Four_Seat_Utilization_Rate
+    two_seat_utilization_useable = 0
+    four_seat_utilization_useable = 0
+    total_useable = 0
+
+    for group_name, counts in group_utilization.items():
+        group_id = int(group_name)
+        useable_count = counts['useable']
+        if group_id in [1, 2, 3, 4]:
+            two_seat_utilization_useable += useable_count
+        elif group_id in [5, 6]:
+            four_seat_utilization_useable += useable_count
+        total_useable += useable_count
+
+    # Calculate the utilization rates
+    if total_useable > 0:
+        two_seat_utilization_rate = round((two_seat_utilization_useable / total_useable) * 100, 1)
+        four_seat_utilization_rate = round((four_seat_utilization_useable / total_useable) * 100, 1)
+    else:
+        two_seat_utilization_rate = 0
+        four_seat_utilization_rate = 0
+
+    data['Two_Seat_Utilization_Rate'] = two_seat_utilization_rate
+    data['Four_Seat_Utilization_Rate'] = four_seat_utilization_rate
 
     # Add the new utilization rates to the original data
     data['utilization_rates'] = utilization_rates
