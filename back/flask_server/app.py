@@ -1,8 +1,9 @@
+import json
+from datetime import datetime
 from flask import Flask, request, jsonify, render_template, send_file
 from flask_cors import CORS
 from ultralytics import YOLO
 import cv2
-import json
 import requests
 import subprocess
 
@@ -62,6 +63,9 @@ def predict():
         cap = cv2.VideoCapture(video_path)
         if not cap.isOpened():
             return jsonify({'error': 'Could not open video file'}), 400
+
+        # 모델 실행 시간 기록
+        run_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
         # 현재 비디오의 해상도 추출
         target_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -166,6 +170,7 @@ def predict():
 
         # 결과를 파일로 저장
         result_data = {
+            "run_time": run_time,  # 모델 실행 시간 추가
             "results": results
         }
 

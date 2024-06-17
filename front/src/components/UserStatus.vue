@@ -4,7 +4,7 @@
       <img src="@/assets/egglogo.png" alt="Menu" class="egglogo-image" />
       <div class="time">
         <img src="@/assets/egg1.png" class="egg1" />
-        기준 시간&emsp;&emsp;<span class="coco">{{ currentTime }}</span>
+        기준 시간&emsp;&emsp;<span class="coco">{{ runTime }}</span>
       </div>
       <div class="info">
         <img src="@/assets/egg1.png" class="egg1" />
@@ -46,7 +46,7 @@ export default {
   name: "MainComponent",
   data() {
     return {
-      currentTime: "",
+      runTime: "",
       availableTables: null,
       twoPersonTables: null,
       fourPersonTables: null,
@@ -63,7 +63,7 @@ export default {
       fetch("http://localhost:3000/api/status")
         .then((response) => response.json())
         .then((data) => {
-          this.currentTime = new Date().toTimeString().slice(0, 8);
+          this.runTime = data.run_time; // 모델 실행 시간 추가
           this.availableTables = data.useable_TotalTable;
           this.twoPersonTables = data.Double_Seat;
           this.fourPersonTables = data.Four_Seat;
