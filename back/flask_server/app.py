@@ -115,9 +115,10 @@ def predict():
         # 각 그룹의 초기 count 값을 저장할 딕셔너리 초기화
         previous_counts = {}
         
-        initial_delay = 59  # 첫 결과 송신까지의 시간(초)
+        initial_delay = 60  # 첫 결과 송신까지의 시간(초)
         interval_delay = 300  # 이후 결과 송신 간격(초)
         last_sent_time = 0
+        first_sent = False
 
         while cap.isOpened():
             ret, frame = cap.read()
@@ -187,22 +188,22 @@ def predict():
                 results.append({'second': second_index, 'groups': frame_results})
                 second_index += 1
 
+                # 매 프레임마다 result.json 파일에 저장
+                result_data = {
+                    "run_time": run_time,  # 모델 실행 시간 추가
+                    "results": results
+                }
+
+                with open('result.json', 'w') as json_file:
+                    json.dump(result_data, json_file, ensure_ascii=False, indent=4)
+
                 current_time = time.time()
                 elapsed_time = current_time - last_sent_time
 
-                if (second_index >= initial_delay and last_sent_time == 0) or (last_sent_time != 0 and elapsed_time >= interval_delay):
-                    result_data = {
-                        "run_time": run_time,  # 모델 실행 시간 추가
-                        "results": results
-                    }
-
-                    # result.json 저장
-                    with open('result.json', 'w') as json_file:
-                        json.dump(result_data, json_file, ensure_ascii=False, indent=4)
-
+                if (second_index >= initial_delay and not first_sent) or (first_sent and elapsed_time >= interval_delay):
                     send_results()
                     last_sent_time = current_time
-                    results = []
+                    first_sent = True
 
             out.write(frame)
             frame_index += 1
@@ -213,6 +214,34 @@ def predict():
         return send_file('output_with_bboxes.mp4', as_attachment=True)
     except Exception as e:
         logging.error("Error processing video: %s", e)
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/reset_result', methods=['POST'])
+def reset_result():
+    try:
+        # 초기화할 데이터 구조
+        initial_data = {
+            "run_time": "",
+            "results": []
+        }
+
+        # result.json 초기화
+        with open('result.json', 'w') as json_file:
+            json.dump(initial_data, json_file, ensure_ascii=False, indent=4)
+
+        # FixResult.json 초기화
+        with open('FixResult.json', 'w') as json_file:
+            json.dump({}, json_file, ensure_ascii=False, indent=4)
+
+        # FlexibleResult.json 초기화
+        with open('FlexibleResult.json', 'w') as json_file:
+            json.dump({}, json_file, ensure_ascii=False, indent=4)
+
+        logging.info("result.json, FixResult.json, FlexibleResult.json 초기화 성공")
+        return jsonify({'message': 'All result files reset successfully'}), 200
+
+    except Exception as e:
+        logging.error("Error resetting result files: %s", e)
         return jsonify({'error': str(e)}), 500
 
 @app.route('/result')

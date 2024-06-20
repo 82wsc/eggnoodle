@@ -3,6 +3,7 @@ const multer = require('multer');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
+const axios = require('axios');  // axios로 요청을 보내기 위해 추가
 
 const uploadDirectory = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadDirectory)) {
@@ -63,7 +64,7 @@ app.post('/receive_result', upload.single('file'), (req, res) => {
   });
 });
 
-app.post('/reset_result', (req, res) => {
+app.post('/reset_result', async (req, res) => {
   // 현재 시간을 원하는 형식으로 얻어 run_time에 저장
   const currentTime = new Date();
   const formattedTime = `${currentTime.getFullYear()}-${(currentTime.getMonth() + 1).toString().padStart(2, '0')}-${currentTime.getDate().toString().padStart(2, '0')} ${currentTime.getHours().toString().padStart(2, '0')}시${currentTime.getMinutes().toString().padStart(2, '0')}분`;
@@ -91,13 +92,21 @@ app.post('/reset_result', (req, res) => {
     run_time: formattedTime
   };
 
-  fs.writeFile('final_result.json', JSON.stringify(finalResult, null, 4), (err) => {
+  fs.writeFile('final_result.json', JSON.stringify(finalResult, null, 4), async (err) => {
     if (err) return res.status(500).send('Error saving file');
     console.log("초기화 성공");
-    res.send('Result reset');
+
+    // Flask 서버 파일 초기화 요청
+    try {
+      const response = await axios.post('http://localhost:5000/reset_result');
+      console.log('Flask server files reset successfully');
+      res.send('Result reset');
+    } catch (error) {
+      console.error('Error resetting Flask server files:', error);
+      res.status(500).send('Error resetting Flask server files');
+    }
   });
 });
-
 
 app.get('/api/status', (req, res) => {
   fs.readFile(path.join(__dirname, 'final_result.json'), 'utf8', (err, data) => {
