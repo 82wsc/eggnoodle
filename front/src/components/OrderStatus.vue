@@ -64,7 +64,7 @@
 export default {
   data() {
     return {
-      runTime: "", // 추가된 데이터
+      runTime: "",
       tables: {},
       besttable: null,
       leasttable: null,
@@ -77,7 +77,7 @@ export default {
   },
   mounted() {
     this.fetchStatus();
-    setInterval(this.fetchStatus, 1000); // 1초마다 데이터 업데이트
+    setInterval(this.fetchStatus, 300000); // 5분마다 데이터 업데이트
   },
   methods: {
     fetchStatus() {
@@ -85,16 +85,23 @@ export default {
         .then((response) => response.json())
         .then((data) => {
           this.runTime = data.run_time; // 모델 실행 시간 추가
-          this.tables = data.utilization_rates;
-          this.besttable = this.getBestTable(data.utilization_rates);
-          this.leasttable = this.getLeastTable(data.utilization_rates);
-          this.fourSeatRate = data.Four_Seat_Utilization_Rate.toFixed(1);
-          this.twoSeatRate = data.Two_Seat_Utilization_Rate.toFixed(1);
-          this.open = data.open;
-          this.middle = data.middle;
-          this.last = data.last;
+          this.tables = this.formatUtilizationRates(data.fix.utilization_rates);
+          this.besttable = this.getBestTable(data.fix.utilization_rates);
+          this.leasttable = this.getLeastTable(data.fix.utilization_rates);
+          this.fourSeatRate = data.fix.Four_Seat_Utilization_Rate.toFixed(1);
+          this.twoSeatRate = data.fix.Two_Seat_Utilization_Rate.toFixed(1);
+          this.open = data.flexible.useable_TotalTable;
+          this.middle = data.flexible.Double_Seat;
+          this.last = data.flexible.Six_Seat;
         })
         .catch((error) => console.error("상태 정보 가져오기 에러:", error));
+    },
+    formatUtilizationRates(utilization_rates) {
+      const formattedRates = {};
+      for (const [key, value] of Object.entries(utilization_rates)) {
+        formattedRates[key.replace("_Utilization_Rate", "")] = value.toFixed(1);
+      }
+      return formattedRates;
     },
     getBestTable(utilization_rates) {
       let bestTable = "";
@@ -102,9 +109,7 @@ export default {
       for (const [key, value] of Object.entries(utilization_rates)) {
         if (value > maxRate) {
           maxRate = value;
-          bestTable = key
-            .replace("_Utilization_Rate", "")
-            .replace("Group_", "");
+          bestTable = key.replace("_Utilization_Rate", "");
         }
       }
       return bestTable;
@@ -115,9 +120,7 @@ export default {
       for (const [key, value] of Object.entries(utilization_rates)) {
         if (value < minRate) {
           minRate = value;
-          leastTable = key
-            .replace("_Utilization_Rate", "")
-            .replace("Group_", "");
+          leastTable = key.replace("_Utilization_Rate", "");
         }
       }
       return leastTable;

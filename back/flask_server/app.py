@@ -6,9 +6,14 @@ from ultralytics import YOLO
 import cv2
 import requests
 import subprocess
+import logging
+import time
 
 app = Flask(__name__)
 CORS(app)  # CORS 설정 추가
+
+# 로깅 설정
+logging.basicConfig(level=logging.DEBUG)
 
 # YOLO 모델 로드
 model = YOLO('model/weights/best.pt')
@@ -31,7 +36,6 @@ group_colors = {
     "Group_6": (128, 0, 128)
 }
 
-# 겹치는 면적을 계산하는 함수
 def get_overlap_area(box1, box2):
     """Calculates the overlap area between two boxes."""
     x1 = max(box1[0], box2[0])
@@ -43,9 +47,26 @@ def get_overlap_area(box1, box2):
         return (x2 - x1) * (y2 - y1)
     return 0
 
-@app.route('/')
-def home():
-    return render_template('index.html')
+def send_results():
+    try:
+        # calculate_utilization_rate.py 및 state.py 호출
+        subprocess.run(['python', 'calculate_utilization_rate.py'], check=True)
+        subprocess.run(['python', 'state.py'], check=True)
+
+        # 최종 result.json을 Node.js 서버로 전송
+        url = 'http://localhost:3000/receive_result'
+        with open('FixResult.json', 'rb') as f:
+            response = requests.post(url, files={'file': ('FixResult.json', f)})
+        with open('FlexibleResult.json', 'rb') as f:
+            response = requests.post(url, files={'file': ('FlexibleResult.json', f)})
+
+        logging.debug("Status Code: %s", response.status_code)
+        logging.debug("Response Body: %s", response.text)
+
+    except subprocess.CalledProcessError as e:
+        logging.error("Subprocess error: %s", e)
+    except requests.RequestException as e:
+        logging.error("Request error: %s", e)
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -93,6 +114,10 @@ def predict():
 
         # 각 그룹의 초기 count 값을 저장할 딕셔너리 초기화
         previous_counts = {}
+        
+        initial_delay = 59  # 첫 결과 송신까지의 시간(초)
+        interval_delay = 300  # 이후 결과 송신 간격(초)
+        last_sent_time = 0
 
         while cap.isOpened():
             ret, frame = cap.read()
@@ -162,48 +187,43 @@ def predict():
                 results.append({'second': second_index, 'groups': frame_results})
                 second_index += 1
 
+                current_time = time.time()
+                elapsed_time = current_time - last_sent_time
+
+                if (second_index >= initial_delay and last_sent_time == 0) or (last_sent_time != 0 and elapsed_time >= interval_delay):
+                    result_data = {
+                        "run_time": run_time,  # 모델 실행 시간 추가
+                        "results": results
+                    }
+
+                    # result.json 저장
+                    with open('result.json', 'w') as json_file:
+                        json.dump(result_data, json_file, ensure_ascii=False, indent=4)
+
+                    send_results()
+                    last_sent_time = current_time
+                    results = []
+
             out.write(frame)
             frame_index += 1
 
         cap.release()
         out.release()
 
-        # 결과를 파일로 저장
-        result_data = {
-            "run_time": run_time,  # 모델 실행 시간 추가
-            "results": results
-        }
-
-        # result.json 저장
-        with open('result.json', 'w') as json_file:
-            json.dump(result_data, json_file, ensure_ascii=False, indent=4)
-
-        # calculate_utilization_rate.py 및 state.py 호출
-        subprocess.run(['python', 'calculate_utilization_rate.py'])
-        subprocess.run(['python', 'state.py'])
-
-        # 최종 result.json을 Node.js 서버로 전송
-        url = 'http://localhost:3000/receive_result'
-        files = {'file': ('FixResult.json', open('FixResult.json', 'rb'))}
-        response = requests.post(url, files=files)
-
-        files = {'file': ('FlexibleResult.json', open('FlexibleResult.json', 'rb'))}
-        response = requests.post(url, files=files)
-
-        # 로깅: 응답 상태 코드와 응답 내용을 출력
-        print("Status Code:", response.status_code)
-        print("Response Body:", response.text)
-
-        # 전송된 파일과 함께 응답 반환
         return send_file('output_with_bboxes.mp4', as_attachment=True)
     except Exception as e:
+        logging.error("Error processing video: %s", e)
         return jsonify({'error': str(e)}), 500
 
 @app.route('/result')
 def result():
-    with open('result.json', 'r') as f:
-        data = json.load(f)
-    return render_template('result.html', results=data)
+    try:
+        with open('result.json', 'r') as f:
+            data = json.load(f)
+        return render_template('result.html', results=data)
+    except Exception as e:
+        logging.error("Error loading result.json: %s", e)
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)

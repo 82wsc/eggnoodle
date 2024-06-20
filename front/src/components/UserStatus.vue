@@ -43,7 +43,7 @@
 
 <script>
 export default {
-  name: "MainComponent",
+  name: "UserStatus",
   data() {
     return {
       runTime: "",
@@ -56,7 +56,7 @@ export default {
   },
   mounted() {
     this.fetchStatus();
-    setInterval(this.fetchStatus, 1000);
+    setInterval(this.fetchStatus, 300000); // 5분마다 데이터 갱신
   },
   methods: {
     fetchStatus() {
@@ -64,11 +64,11 @@ export default {
         .then((response) => response.json())
         .then((data) => {
           this.runTime = data.run_time; // 모델 실행 시간 추가
-          this.availableTables = data.useable_TotalTable;
-          this.twoPersonTables = data.Double_Seat;
-          this.fourPersonTables = data.Four_Seat;
-          this.sixPersonTables = data.Six_Seat;
-          this.availableSeats = data.useable_TotalChair;
+          this.availableTables = data.flexible.useable_TotalTable;
+          this.twoPersonTables = data.flexible.Double_Seat;
+          this.fourPersonTables = data.flexible.Four_Seat;
+          this.sixPersonTables = data.flexible.Six_Seat;
+          this.availableSeats = data.flexible.useable_TotalChair;
         })
         .catch((error) => console.error("상태 정보 가져오기 에러:", error));
     },

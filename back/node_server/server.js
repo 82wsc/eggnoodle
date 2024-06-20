@@ -29,6 +29,8 @@ app.use(cors({
   credentials: true
 }));
 
+let finalResult = {};
+
 app.post('/receive_result', upload.single('file'), (req, res) => {
   console.log('Received file:', req.file);
 
@@ -39,13 +41,63 @@ app.post('/receive_result', upload.single('file'), (req, res) => {
     const jsonData = JSON.parse(data);
     console.log(JSON.stringify(jsonData, null, 4));
 
-    fs.writeFile('final_result.json', JSON.stringify(jsonData, null, 4), (err) => {
+    // 현재 시간을 원하는 형식으로 얻어 run_time에 저장
+    const currentTime = new Date();
+    const formattedTime = `${currentTime.getFullYear()}-${(currentTime.getMonth() + 1).toString().padStart(2, '0')}-${currentTime.getDate().toString().padStart(2, '0')} ${currentTime.getHours().toString().padStart(2, '0')}시${currentTime.getMinutes().toString().padStart(2, '0')}분`;
+
+    // 파일 이름에 따라 finalResult 객체 업데이트
+    if (req.file.originalname === 'FixResult.json') {
+      finalResult.fix = jsonData;
+    } else if (req.file.originalname === 'FlexibleResult.json') {
+      finalResult.flexible = jsonData;
+    }
+
+    // run_time 추가
+    finalResult.run_time = formattedTime;
+
+    fs.writeFile('final_result.json', JSON.stringify(finalResult, null, 4), (err) => {
       if (err) return res.status(500).send('Error saving file');
       console.log("전송 성공");
       res.send('File received and processed');
     });
   });
 });
+
+app.post('/reset_result', (req, res) => {
+  // 현재 시간을 원하는 형식으로 얻어 run_time에 저장
+  const currentTime = new Date();
+  const formattedTime = `${currentTime.getFullYear()}-${(currentTime.getMonth() + 1).toString().padStart(2, '0')}-${currentTime.getDate().toString().padStart(2, '0')} ${currentTime.getHours().toString().padStart(2, '0')}시${currentTime.getMinutes().toString().padStart(2, '0')}분`;
+
+  finalResult = {
+    fix: {
+      Two_Seat_Utilization_Rate: 0,
+      Four_Seat_Utilization_Rate: 0,
+      utilization_rates: {
+        "1_Utilization_Rate": 0,
+        "2_Utilization_Rate": 0,
+        "3_Utilization_Rate": 0,
+        "4_Utilization_Rate": 0,
+        "5_Utilization_Rate": 0,
+        "6_Utilization_Rate": 0
+      }
+    },
+    flexible: {
+      useable_TotalTable: 0,
+      useable_TotalChair: 0,
+      Double_Seat: 0,
+      Four_Seat: 0,
+      Six_Seat: 0
+    },
+    run_time: formattedTime
+  };
+
+  fs.writeFile('final_result.json', JSON.stringify(finalResult, null, 4), (err) => {
+    if (err) return res.status(500).send('Error saving file');
+    console.log("초기화 성공");
+    res.send('Result reset');
+  });
+});
+
 
 app.get('/api/status', (req, res) => {
   fs.readFile(path.join(__dirname, 'final_result.json'), 'utf8', (err, data) => {
