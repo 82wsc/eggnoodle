@@ -42,14 +42,14 @@ def calculate_group_utilization_rate(result_file_path):
         two_seat_utilization_rate = 0
         four_seat_utilization_rate = 0
 
-    data['Two_Seat_Utilization_Rate'] = two_seat_utilization_rate
-    data['Four_Seat_Utilization_Rate'] = four_seat_utilization_rate
+    fixed_results = {
+        "Two_Seat_Utilization_Rate": two_seat_utilization_rate,
+        "Four_Seat_Utilization_Rate": four_seat_utilization_rate,
+        "utilization_rates": utilization_rates
+    }
 
-    # Add the new utilization rates to the original data
-    data['utilization_rates'] = utilization_rates
-
-    with open(result_file_path, 'w') as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
+    with open('FixResult.json', 'w') as f:
+        json.dump(fixed_results, f, ensure_ascii=False, indent=4)
 
 if __name__ == "__main__":
     result_file_path = 'result.json'

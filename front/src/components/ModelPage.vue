@@ -10,6 +10,7 @@
         <button @click="uploadFile" class="upload-button">
           파일 업로드 및 분석
         </button>
+        <button @click="resetResult" class="reset-button">초기화</button>
       </div>
     </div>
   </main>
@@ -52,6 +53,14 @@ export default {
         console.log("응답:", response.data);
       } catch (error) {
         console.error("파일 업로드 오류:", error);
+      }
+    },
+    async resetResult() {
+      try {
+        const response = await axios.post("http://localhost:3000/reset_result");
+        console.log("초기화 응답:", response.data);
+      } catch (error) {
+        console.error("초기화 오류:", error);
       }
     },
   },
@@ -106,7 +115,8 @@ h2 {
   font-family: "Light";
   cursor: pointer;
 }
-.upload-button {
+.upload-button,
+.reset-button {
   padding: 10px 20px;
   background-color: #ff814b;
   color: white;
@@ -114,8 +124,10 @@ h2 {
   border-radius: 5px;
   cursor: pointer;
   font-family: "Bold";
+  margin: 10px 5px;
 }
-.upload-button:hover {
+.upload-button:hover,
+.reset-button:hover {
   background-color: #e0703b;
 }
 </style>

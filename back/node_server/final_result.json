@@ -1,0 +1,22 @@
+{
+    "fix": {
+        "Two_Seat_Utilization_Rate": 1.6,
+        "Four_Seat_Utilization_Rate": 98.4,
+        "utilization_rates": {
+            "1_Utilization_Rate": 1.7,
+            "2_Utilization_Rate": 0,
+            "3_Utilization_Rate": 1.4,
+            "4_Utilization_Rate": 0,
+            "5_Utilization_Rate": 94.8,
+            "6_Utilization_Rate": 100
+        }
+    },
+    "flexible": {
+        "useable_TotalTable": 4,
+        "useable_TotalChair": 10,
+        "Double_Seat": 3,
+        "Four_Seat": 0,
+        "Six_Seat": 0
+    },
+    "run_time": "2024-06-20 22시41분"
+}
