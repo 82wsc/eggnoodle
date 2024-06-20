@@ -184,7 +184,10 @@ def predict():
 
         # 최종 result.json을 Node.js 서버로 전송
         url = 'http://localhost:3000/receive_result'
-        files = {'file': ('result.json', open('result.json', 'rb'))}
+        files = {'file': ('FixResult.json', open('FixResult.json', 'rb'))}
+        response = requests.post(url, files=files)
+
+        files = {'file': ('FlexibleResult.json', open('FlexibleResult.json', 'rb'))}
         response = requests.post(url, files=files)
 
         # 로깅: 응답 상태 코드와 응답 내용을 출력
