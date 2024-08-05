@@ -72,3 +72,6 @@ YOLOv8n 모델을 사용하여 학습을 진행한 결과, 다양한 지표를 �
 - 실시간 탐지를 위한 객체 그룹화 및 결과 도출
 - 웹 애플리케이션을 통한 실시간 정보 제공
 
+<img src="image/web1.jpg" alt="실제 화면" width="600"/> 
+<img src="image/web2.jpg" alt="실제 화면" width="600"/>
+<img src="image/structure.jpg" alt="개발 구조도" width="600"/>
